@@ -4,7 +4,7 @@ export const environment = {
     supaBaseUrl: 'https://cbyrivcctiedeyvjepyy.supabase.co',
     subaseApiKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNieXJpdmNjdGllZGV5dmplcHl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0Njc1ODUsImV4cCI6MjA3NDA0MzU4NX0.9tfX08UL2vQWwN7Tae6D230r784tydpS0OATLOkaQW8', 
   },
-  confi:{
+  FIREBASE_CONFIG:{
   apiKey: "AIzaSyCYPz4pEbp9ogE-koFjsUevxLFCviYAluA",
   authDomain: "wallpaper-ceed8.firebaseapp.com",
   projectId: "wallpaper-ceed8",
