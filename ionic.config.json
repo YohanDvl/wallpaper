@@ -1,7 +1,5 @@
 {
-  "name": "wallpaper",
-  "integrations": {
-    "capacitor": {}
-  },
+  "name": "my-wallpaper",
+  "integrations": {},
   "type": "angular"
 }

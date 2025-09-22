@@ -7,16 +7,16 @@ import { IonicModule } from '@ionic/angular';
 import { RegisterPageRoutingModule } from './register-routing.module';
 
 import { RegisterPage } from './register.page';
-import { SharedModule } from 'src/app/shared/shared-module';
+import { SharedModuleModule } from "src/app/shared/shared-module-module";
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SharedModule,
     RegisterPageRoutingModule,
-  ],
+    SharedModuleModule
+],
   declarations: [RegisterPage]
 })
 export class RegisterPageModule {}

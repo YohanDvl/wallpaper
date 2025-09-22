@@ -1,0 +1,123 @@
+/*
+  Estilos mejorados para Login
+  - Misma paleta: #6a11cb (primario) y negro en el fondo
+  - Mejoras: espaciado, foco accesible, sombras suaves, animación de entrada
+*/
+
+/* Fondo general con degradado morado a negro */
+ion-content {
+  --background: radial-gradient(1200px 900px at 20% 0%, rgba(255,255,255,0.06), transparent 40%),
+                 linear-gradient(135deg, #6a11cb 0%, #000000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px; /* respiración en pantallas pequeñas */
+}
+
+/* Tarjeta centrada y pulida */
+ion-card {
+  position: relative;
+  width: min(420px, 92vw);
+  padding: 24px 20px;
+  border-radius: 16px;
+
+  /* Glassmorphism sutil con fallback */
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  backdrop-filter: saturate(150%) blur(12px);
+
+  /* Sombras sobrias */
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+
+  /* Borde muy sutil para contorno */
+  border: 1px solid rgba(255, 255, 255, 0.6);
+
+  /* Animación de entrada */
+  animation: card-in 320ms ease;
+}
+
+/* Barra superior de acento con el degradado de la marca */
+ion-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #6a11cb, #8e53f0 50%, #000000);
+  border-radius: 16px 16px 0 0;
+}
+
+/* Ritmo vertical entre filas */
+ion-row {
+  margin-bottom: 16px;
+}
+ion-row:last-child {
+  margin-bottom: 0;
+}
+
+/* Inputs (wrapper del componente) */
+app-input {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+  transition: outline-color 160ms ease, box-shadow 160ms ease;
+  outline: 2px solid transparent; /* anillo de foco accesible */
+  outline-offset: 0;
+}
+app-input:focus-within {
+  outline-color: rgba(106, 17, 203, 0.35);
+  box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.12);
+}
+
+/* Botón principal (wrapper del componente) */
+app-button {
+  display: block;
+  width: 100%;
+  border-radius: 12px;
+  will-change: transform;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+  box-shadow: 0 6px 14px rgba(106, 17, 203, 0.28);
+}
+app-button:hover {
+  transform: translateY(-1px);
+}
+app-button:active {
+  transform: translateY(0);
+}
+app-button[disabled] {
+  filter: grayscale(0.25) opacity(0.9);
+  box-shadow: none;
+}
+
+/* Colores del tema primario de Ionic */
+:host {
+  --ion-color-primary: #6a11cb; /* morado base */
+  --ion-color-primary-rgb: 106, 17, 203;
+  --ion-color-primary-contrast: #ffffff; /* asegurar contraste en botones primarios */
+}
+
+/* Animaciones */
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.992);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Respeto de preferencias del usuario */
+@media (prefers-reduced-motion: reduce) {
+  ion-card {
+    animation: none;
+  }
+  app-button,
+  app-input {
+    transition: none;
+  }
+}

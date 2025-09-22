@@ -1,0 +1,96 @@
+/*
+	Estilos alineados con Login (profesional)
+	- Misma paleta: #6a11cb y negro
+	- Glassmorphism sutil, sombras sobrias y foco discreto
+*/
+
+/* Fondo general */
+ion-content {
+	--background: radial-gradient(1200px 900px at 20% 0%, rgba(255,255,255,0.06), transparent 40%),
+								linear-gradient(135deg, #6a11cb 0%, #000000 100%);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+/* Tarjeta centrada */
+ion-card {
+	position: relative;
+	width: min(420px, 92vw);
+	padding: 24px 20px;
+	border-radius: 16px;
+
+	background: rgba(255, 255, 255, 0.82);
+	-webkit-backdrop-filter: saturate(150%) blur(12px);
+	backdrop-filter: saturate(150%) blur(12px);
+
+	box-shadow:
+		0 8px 24px rgba(0, 0, 0, 0.12),
+		0 1px 2px rgba(0, 0, 0, 0.08);
+
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	animation: card-in 320ms ease;
+}
+
+/* Acento superior */
+ion-card::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 3px;
+	background: linear-gradient(90deg, #6a11cb, #8e53f0 50%, #000000);
+	border-radius: 16px 16px 0 0;
+}
+
+/* Espaciado entre filas */
+ion-row { margin-bottom: 16px; }
+ion-row:last-child { margin-bottom: 0; }
+
+/* Inputs */
+app-input {
+	display: block;
+	width: 100%;
+	border-radius: 12px;
+	transition: outline-color 160ms ease, box-shadow 160ms ease;
+	outline: 2px solid transparent;
+	outline-offset: 0;
+}
+app-input:focus-within {
+	outline-color: rgba(106, 17, 203, 0.35);
+	box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.12);
+}
+
+/* Botón principal */
+app-button {
+	display: block;
+	width: 100%;
+	border-radius: 12px;
+	will-change: transform;
+	transition: transform 140ms ease, box-shadow 140ms ease;
+	box-shadow: 0 6px 14px rgba(106, 17, 203, 0.28);
+}
+app-button:hover { transform: translateY(-1px); }
+app-button:active { transform: translateY(0); }
+app-button[disabled] { filter: grayscale(0.25) opacity(0.9); box-shadow: none; }
+
+/* Colores del tema */
+:host {
+	--ion-color-primary: #6a11cb;
+	--ion-color-primary-rgb: 106, 17, 203;
+	--ion-color-primary-contrast: #ffffff;
+}
+
+/* Animaciones */
+@keyframes card-in {
+	from { opacity: 0; transform: translateY(8px) scale(0.992); }
+	to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	ion-card { animation: none; }
+	app-button, app-input { transition: none; }
+}
+

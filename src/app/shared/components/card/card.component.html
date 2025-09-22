@@ -1,0 +1,16 @@
+<ion-card-content class="container" button id="open-action-sheet"
+>
+
+  <ion-card  *ngFor="let item of imgUrl; index as i"
+   >
+  @if (imgUrl) {
+   <img [src]="imgUrl[i]" style="width: 120px; height: 200px;"
+   button (click)="setNewUrl(imgUrl[i])">
+  }
+  </ion-card>
+
+  <app-sheet-modal></app-sheet-modal>
+
+  <!-- <app-modal></app-modal> -->
+
+</ion-card-content>
