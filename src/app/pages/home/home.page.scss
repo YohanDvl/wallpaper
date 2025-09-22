@@ -1,16 +1,133 @@
+/*
+  Estilos para Home basados en login.page.scss
+  - Paleta: #6a11cb (primario) con fondo a negro
+  - Glassmorphism sutil en cabecera y tarjeta
+  - Ritmo y animaciones suaves, con respeto a reduced-motion
+*/
 
-.header{
-  width: 100%;
+/* Fondo general con el mismo degradado */
+ion-content {
+  --background: radial-gradient(1200px 900px at 20% 0%, rgba(255,255,255,0.06), transparent 40%),
+                linear-gradient(135deg, #6a11cb 0%, #000000 100%);
+  display: block;
+  min-height: 100%;
+}
+
+/* Cabecera con glassmorphism y layout responsivo */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  margin: 16px;
+  border-radius: 14px;
+
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  backdrop-filter: saturate(150%) blur(12px);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+
+  animation: header-in 320ms ease;
+}
+
+/* Texto de bienvenida */
+.header .p p {
+  margin: 0;
+  font-size: clamp(18px, 2.2vw, 22px);
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+/* Selector de idioma */
+.languageContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.languageContainer ion-button {
+  --border-radius: 10px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --box-shadow: 0 6px 14px rgba(106, 17, 203, 0.28);
+  transition: transform 140ms ease, box-shadow 140ms ease, filter 140ms ease;
+}
+.languageContainer ion-button:hover {
+  transform: translateY(-1px);
+}
+.languageContainer ion-button:active {
+  transform: translateY(0);
+}
+.languageContainer ion-button:focus-visible {
+  outline: 3px solid rgba(106, 17, 203, 0.35);
+  outline-offset: 2px;
+}
+
+/* Contenedor de la(s) tarjeta(s) centrado y responsivo */
+.container-carta {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  box-shadow: 0 10px 10px rgba(0,0,0, 0.4);
+  grid-template-columns: 1fr;
+  justify-items: center;
+  gap: 16px;
+  padding: 8px 16px 24px;
 }
 
-.p{
-  text-align: center;
-  color: rgb(93, 93, 150);
+/* Envolver el componente compartido como tarjeta “glass” */
+app-card {
+  display: block;
+  width: min(920px, 92vw);
+  min-height: 160px;
+  padding: 12px;
+
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(150%) blur(12px);
+  backdrop-filter: saturate(150%) blur(12px);
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.12),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+
+  animation: card-in 320ms ease;
 }
 
-.languageContainer{
- justify-self: right;
+/* FAB: separación vertical entre botones y espacio con el borde */
+ion-fab {
+  margin: 0 8px 8px 0;
+}
+ion-fab app-floating-button + app-floating-button {
+  margin-top: 8px;
+}
+
+/* Wrapper del botón flotante para estados accesibles */
+app-floating-button:focus-within {
+  outline: 3px solid rgba(106, 17, 203, 0.35);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+/* Colores del tema primario (consistentes con login) */
+:host {
+  --ion-color-primary: #6a11cb;
+  --ion-color-primary-rgb: 106, 17, 203;
+  --ion-color-primary-contrast: #ffffff;
+}
+
+/* Animaciones */
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.992); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes header-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Preferencias del usuario: reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .header, app-card { animation: none; }
+  .languageContainer ion-button { transition: none; }
 }
