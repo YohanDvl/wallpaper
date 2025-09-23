@@ -6,8 +6,8 @@ import { GlobalUrl } from 'src/app/core/providers/globalUrl/global-url';
 import { Language } from 'src/app/core/providers/language/language';
 import { UpLoader } from 'src/app/core/providers/upLoader/up-loader';
 import { IImage } from 'src/interfaces/image.interface';
-// import myCustomPlugin from 'src/app/plugins/myCustomPlugin';
-// import { Preferences } from '@capacitor/preferences'
+import { ActionSheetController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -26,6 +26,8 @@ export class HomePage implements OnInit {
     private readonly uploaderSrv: UpLoader,
     private readonly urlSrv: GlobalUrl,
     private readonly langSrv: Language,
+    private actionSheetCtrl: ActionSheetController,
+    private translate: TranslateService
   ) { }
 
   ngOnInit() {
@@ -63,6 +65,40 @@ export class HomePage implements OnInit {
 
        this.urlSrv.addUrl(this.image);//Array glodal de imagenes
 
+  }
+
+  setLanguage(lang: 'en' | 'es') {
+    this.translate.use(lang);
+  }
+
+  async openSettings() {
+    const sheet = await this.actionSheetCtrl.create({
+      header: 'Configuración',
+      buttons: [
+        {
+          text: 'Inglés',
+          icon: 'language',
+          handler: () => this.setLanguage('en')
+        },
+        {
+          text: 'Español',
+          icon: 'language',
+          handler: () => this.setLanguage('es')
+        },
+        {
+          text: 'Cerrar sesión',
+          role: 'destructive',
+          icon: 'log-out',
+          handler: () => this.logOut?.()
+        },
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          icon: 'close'
+        }
+      ]
+    });
+    await sheet.present();
   }
 
   // public async callPlugin(){

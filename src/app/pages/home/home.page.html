@@ -3,8 +3,6 @@
   <div class="header">
     <div class="p"><p>{{ 'WELCOME_MESSAGE' | translate }}</p></div>
   <div class="languageContainer">
-    <ion-button (click)="languageChanger($event)"data-lang="en">Ingles</ion-button>
-    <ion-button (click)="languageChanger($event)"data-lang="es">Español</ion-button>
   </div>
   </div>
 <!-- <app-button
@@ -40,6 +38,14 @@ color="primary"
 </app-button> -->
 
 <ion-fab slot="fixed" vertical="bottom" horizontal="end" >
+
+<app-floating-button
+color="gray"
+name="settings"
+(click)="openSettings()">
+</app-floating-button>
+  
+
 <app-floating-button
 color="primary"
 (click)="pickImage()"
@@ -49,13 +55,6 @@ horizontal="end"
 
 </app-floating-button>
 
-<app-floating-button
-color="danger"
-(click)="logOut()"
-name="exit"
-style="margin: 0.5px;"
->
-</app-floating-button>
 </ion-fab>
 
 

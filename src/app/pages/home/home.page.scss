@@ -32,9 +32,19 @@ ion-content {
   border: 1px solid rgba(255, 255, 255, 0.6);
 
   animation: header-in 320ms ease;
+  position: relative; /* permite posicionar el título */
 }
 
-/* Texto de bienvenida */
+/* Centrar título del header sin afectar a los botones */
+.header .p {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  text-align: center;
+  pointer-events: none; /* no bloquea clicks de otros controles en el header */
+}
+
 .header .p p {
   margin: 0;
   font-size: clamp(18px, 2.2vw, 22px);
