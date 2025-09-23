@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -6,6 +7,7 @@ import { Injectable } from '@angular/core';
 export class GlobalUrl {
   private imgUrl: string = '';
   private imgUrls: string[] = [];
+  private urlsSubject = new BehaviorSubject<string[]>([]);
 
   setUrl(url: string){
     this.imgUrl = url;
@@ -17,14 +19,20 @@ export class GlobalUrl {
 
   setUrls(urls: string[]){
     this.imgUrls = urls;
+    this.urlsSubject.next([...this.imgUrls]);
   }
 
   getUrls(): string[]{
     return this.imgUrls;
   }
 
+  getUrls$(): Observable<string[]> {
+    return this.urlsSubject.asObservable();
+  }
+
   addUrl(url: string){
     this.imgUrls.push(url);
+    this.urlsSubject.next([...this.imgUrls]);
   }
 
 }

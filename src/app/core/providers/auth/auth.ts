@@ -41,4 +41,20 @@ export class Auth {
       }
     }
 
+    // Exponer el UID del usuario actual (o null si no hay sesión)
+    getUid(): string | null {
+      return this.authFirebase.currentUser?.uid ?? null;
+    }
+
+    // Espera hasta que el UID esté disponible (útil al entrar tras login o recarga)
+    async waitForUid(timeoutMs = 5000): Promise<string | null> {
+      const start = Date.now();
+      while (Date.now() - start < timeoutMs) {
+        const uid = this.getUid();
+        if (uid) return uid;
+        await new Promise((r) => setTimeout(r, 100));
+      }
+      return this.getUid();
+    }
+
 }

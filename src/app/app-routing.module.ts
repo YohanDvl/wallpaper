@@ -1,13 +1,9 @@
 
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
-import { redirectLoggedInTo, redirectUnauthorizedTo,
-  canActivate, AuthGuard
+import { AuthGuard } from './guards/auth.guard';
 
-} from "@angular/fire/auth-guard";
-
-const isLoged = () => redirectLoggedInTo(['/home']);
-const isNotLoged = () => redirectUnauthorizedTo(['/login']);
+// Rutas protegidas mediante nuestro AuthGuard
 
 const routes: Routes = [
   {
@@ -18,15 +14,14 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./pages/login/login.module').then( m => m.LoginPageModule),
-            canActivate: [AuthGuard],
-    data: {authGuardPipe: isLoged},
+    // Si ya está autenticado, el componente de login puede redirigir internamente a /home
   },
   {
     path: 'home',
     loadChildren: () => import('./pages/home/home.module').then( m => m.HomePageModule),
-        canActivate: [AuthGuard],
-    data: {authGuardPipe: isNotLoged},
+    canActivate: [AuthGuard],
   },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   {
     path: '**',
     redirectTo: 'login',

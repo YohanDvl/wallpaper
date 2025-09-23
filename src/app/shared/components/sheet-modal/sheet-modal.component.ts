@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import myCustomPlugin from 'src/app/plugins/myCustomPlugin';
-import { Preferences } from '@capacitor/preferences';
+import myCustomPlugin, { WallpaperTarget } from 'src/app/plugins/myCustomPlugin';
 import { GlobalUrl } from 'src/app/core/providers/globalUrl/global-url';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-sheet-modal',
@@ -12,41 +12,57 @@ import { GlobalUrl } from 'src/app/core/providers/globalUrl/global-url';
 export class SheetModalComponent  implements OnInit {
    public actionSheetButtons = [
     {
-      text: 'Call Plugin',
-      role: 'Llamar plugin',
-      handler: () =>{
-        this.callPlugin();
-      }
+      text: 'Fijar como pantalla principal',
+      handler: () => this.applyWallpaper('home')
     },
     {
-      text: 'Share',
-      data: {
-        action: 'share',
-      },
+      text: 'Fijar como pantalla de bloqueo',
+      handler: () => this.applyWallpaper('lock')
     },
     {
-      text: 'Cancel',
-      role: 'cancel',
-      data: {
-        action: 'cancel',
-      },
+      text: 'Fijar en ambas',
+      handler: () => this.applyWallpaper('both')
     },
+    {
+      text: 'Cancelar',
+      role: 'cancel'
+    }
   ];
 
-    public async callPlugin(){
-     const url = this.urlSrv.getUrl();
-     console.log(url);
-    console.log('Calling plugin...');
-    await Preferences.set({
-      key: 'url',
-      value: url,
-    })
-    const resp = await myCustomPlugin.execute();
-    console.log('LOG: RESPONSE FROM PLUGIN', JSON.stringify(resp));
-
-  }
-  constructor(private readonly urlSrv: GlobalUrl) { }
+    private async applyWallpaper(target: WallpaperTarget){
+      try {
+        const url = this.urlSrv.getUrl();
+        if (!url) return;
+        const resp = await myCustomPlugin.setWallpaper({ url, target });
+        console.log('Wallpaper aplicado', resp);
+        await this.presentToast(
+          target === 'both'
+            ? 'Fondo aplicado a principal y bloqueo'
+            : target === 'lock'
+              ? 'Fondo aplicado a pantalla de bloqueo'
+              : 'Fondo aplicado a pantalla principal',
+          'success'
+        );
+      } catch (e) {
+        console.error(e);
+        await this.presentToast('No se pudo aplicar el fondo', 'danger');
+      }
+    }
+  constructor(private readonly urlSrv: GlobalUrl, private toastCtrl: ToastController) { }
 
   ngOnInit() {}
+
+  private async presentToast(message: string, color: 'success' | 'warning' | 'danger' | 'medium' = 'medium'){
+    const t = await this.toastCtrl.create({
+      message,
+      duration: 1800,
+      position: 'bottom',
+      color,
+      buttons: [
+        { text: 'OK', role: 'cancel' }
+      ]
+    });
+    await t.present();
+  }
 
 }

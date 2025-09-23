@@ -31,7 +31,13 @@ export class HomePage implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Al iniciar, cargamos las imágenes del usuario actual
+    this.refreshUserImages().catch(console.error);
+  }
 
+  // También refrescar cada vez que la vista entra en foco
+  ionViewWillEnter() {
+    this.refreshUserImages().catch(console.error);
   }
 
   public languageChanger(event: any){
@@ -43,13 +49,22 @@ export class HomePage implements OnInit {
     public async logOut(){
    await this.authSrv.logOut();
     this.router.navigate(['/login']);
+      // limpia estado local/global de imágenes al cambiar de cuenta
+      this.urlSrv.setUrls([]);
   }
 
   public async pickImage(){
     this.img = await this.fileSrv.pickImage();
 
+   // Usar carpeta propia del usuario
+   const uid = this.authSrv.getUid();
+   if (!uid) {
+     console.error('No hay sesión de usuario');
+     return;
+   }
+
    const path = await this.uploaderSrv.upload('imagen',
-       `${Date.now()}-${this.img.name}`,
+       `user_${uid}/${Date.now()}-${this.img.name}`,
        this.img.mimeType,
        this.img.data);
        console.log(path);
@@ -57,13 +72,14 @@ export class HomePage implements OnInit {
       //  const hola = await this.uploaderSrv.getUrls('images', path as any);
       //  console.log(hola);
 
-       this.image = await this.uploaderSrv.getUrl('imagen', path);
+  this.image = await this.uploaderSrv.getUrl('imagen', path);
 
       //  this.imgUrl.push(this.image);
 
-       this.urlSrv.setUrl(this.image); //Seteamos la url para hacerla global con el servicio
+    this.urlSrv.setUrl(this.image); // última URL
 
-       this.urlSrv.addUrl(this.image);//Array glodal de imagenes
+    // Recarga la lista completa desde el Storage del usuario
+    await this.refreshUserImages();
 
   }
 
@@ -107,5 +123,18 @@ export class HomePage implements OnInit {
   //   console.log('LOG: RESPONSE FROM PLUGIN', JSON.stringify(resp));
 
   // }
+
+  // Carga las imágenes del usuario logueado desde el bucket y actualiza el estado global
+  private async refreshUserImages(): Promise<void> {
+    // Espera a que el UID esté listo (tras login o hot-reload)
+    const uid = await this.authSrv.waitForUid();
+    if (!uid) {
+      this.urlSrv.setUrls([]);
+      return;
+    }
+    const folder = `user_${uid}`;
+    const urls = await this.uploaderSrv.getUserFolderSignedUrls('imagen', folder);
+    this.urlSrv.setUrls(urls);
+  }
 
 }

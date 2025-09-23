@@ -27,61 +27,69 @@ public class MyCustomPlugin extends Plugin {
 
   public static  final String CAPACITOR_SHARED_PREFERENCES_NAME = "CapacitorStorage";
 
+  // Nuevo método: establece el wallpaper según target y URL pasada desde JS
   @PluginMethod()
-  public void execute(PluginCall call) throws JSONException {
-    JSObject resp = new JSObject();
-    System.out.println("Log: From plugin");
+  public void setWallpaper(PluginCall call) {
+    String url = call.getString("url", null);
+    String target = call.getString("target", "home"); // home | lock | both
 
-    SharedPreferences sharedPreferences = getContext().getSharedPreferences(CAPACITOR_SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-    System.out.println(sharedPreferences.getAll());
+    if (url == null || url.isEmpty()) {
+      call.reject("URL vacía o nula");
+      return;
+    }
 
-    String urlObject = sharedPreferences.getString("url", "none");
-    System.out.println(urlObject);
+    new Thread(() -> {
+      try {
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
+        Bitmap bitmap = downloadImage(url);
 
-     new Thread(()->{
-       try{
-         WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
-         Bitmap bitmap = downloadImage(urlObject);
+        if (bitmap == null) {
+          call.reject("No se pudo descargar la imagen");
+          return;
+        }
 
-         if(bitmap != null){
-          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+          int flag = WallpaperManager.FLAG_SYSTEM; // home por defecto
+          if ("lock".equals(target)) {
+            flag = WallpaperManager.FLAG_LOCK;
+          } else if ("both".equals(target)) {
+            // Establecer ambos: primero home, luego lock
             wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_SYSTEM);
-
-          }else{
-            wallpaperManager.setBitmap(bitmap);
+            wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK);
+            JSObject result = new JSObject();
+            result.put("success", true);
+            call.resolve(result);
+            return;
           }
-           System.out.println("Fondo cambiado con exito");
+          wallpaperManager.setBitmap(bitmap, null, true, flag);
+        } else {
+          // En APIs antiguas solo hay uno (home)
+          wallpaperManager.setBitmap(bitmap);
+        }
 
-          JSObject result = new JSObject();
-          result.put("succes", true);
-          call.resolve(result);
-         }else{
-           call.reject("No se puede descargar la imagen");
-         }
+        JSObject result = new JSObject();
+        result.put("success", true);
+        call.resolve(result);
+      } catch (IOException e) {
+        e.printStackTrace();
+        call.reject("Error: " + e.getMessage());
+      }
+    }).start();
+  }
 
-       }catch (IOException e){
-            e.printStackTrace();
-            call.reject("Error: "+ e.getMessage());
-       }
-     }).start();
-
-
-    /*if(urlObject.equals("none")){
-      call.reject("Image not found");
+  // Método antiguo por compatibilidad: lee URL de Preferences
+  @PluginMethod()
+  public void execute(PluginCall call) {
+    SharedPreferences sharedPreferences = getContext().getSharedPreferences(CAPACITOR_SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+    String urlObject = sharedPreferences.getString("url", "");
+    if (urlObject == null || urlObject.isEmpty()) {
+      call.reject("URL no encontrada en Preferences");
       return;
-    }*/
-
-    //JSONObject url = new JSONObject(urlObject);
-    //String signedUrl = url.getString("value");
-
-   /* if(signedUrl.isEmpty()){
-      call.reject("No hay imagen");
-      return;
-    }*/
-
-    //Toast.show(getContext(), "image");
-    resp.put("message", "Hello world");
-    call.resolve(resp);
+    }
+    // Por defecto aplica a pantalla principal
+    call.set("url", urlObject);
+    call.set("target", "home");
+    setWallpaper(call);
   }
 
   private Bitmap downloadImage(String signedUrl){

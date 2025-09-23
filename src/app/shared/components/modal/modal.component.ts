@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import myCustomPlugin from 'src/app/plugins/myCustomPlugin';
-import { Preferences } from '@capacitor/preferences';
 import { GlobalUrl } from '../../../core/providers/globalUrl/global-url';
 
 @Component({
@@ -18,16 +17,11 @@ export class ModalComponent  implements OnInit {
   ngOnInit() {}
 
     public async callPlugin(){
-     const url = this.urlSrv.getUrl();
-     console.log(url);
-    console.log('Calling plugin...');
-    await Preferences.set({
-      key: 'url',
-      value: url,
-    })
-    const resp = await myCustomPlugin.execute();
-    console.log('LOG: RESPONSE FROM PLUGIN', JSON.stringify(resp));
-
-  }
+      const url = this.urlSrv.getUrl();
+      if (!url) return;
+      console.log('Calling plugin with setWallpaper...');
+      const resp = await myCustomPlugin.setWallpaper({ url, target: 'home' });
+      console.log('LOG: RESPONSE FROM PLUGIN', JSON.stringify(resp));
+    }
 
 }

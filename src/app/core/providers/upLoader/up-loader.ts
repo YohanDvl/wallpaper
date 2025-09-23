@@ -27,6 +27,36 @@ export class UpLoader {
     return data?.signedUrl || '';
   }
 
+  // Lista archivos por prefijo (carpeta del usuario)
+  async listByPrefix(bucket: string, prefix: string): Promise<string[]> {
+    const { data, error } = await supabase.storage.from(bucket).list(prefix, {
+      limit: 100,
+      offset: 0,
+    });
+    if (error) {
+      console.error(error);
+      return [];
+    }
+    return (data ?? []).map((f) => `${prefix}/${f.name}`);
+  }
+
+  // Firma múltiples URLs a la vez
+  async createSignedUrls(bucket: string, paths: string[], expiresIn = 86400): Promise<string[]> {
+    if (!paths.length) return [];
+    const { data, error } = await supabase.storage.from(bucket).createSignedUrls(paths, expiresIn);
+    if (error) {
+      console.error(error);
+      return [];
+    }
+    return (data ?? []).map((d) => d.signedUrl);
+  }
+
+  // Helper: obtiene URLs firmadas de todos los archivos en la carpeta de un usuario
+  async getUserFolderSignedUrls(bucket: string, userFolder: string): Promise<string[]> {
+    const paths = await this.listByPrefix(bucket, userFolder);
+    return this.createSignedUrls(bucket, paths);
+  }
+
 
   // async getUrls(bucket: string, path: string[]){
 
