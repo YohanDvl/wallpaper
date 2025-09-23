@@ -46,7 +46,7 @@ export class HomePage implements OnInit {
   public async pickImage(){
     this.img = await this.fileSrv.pickImage();
 
-   const path = await this.uploaderSrv.upload('images',
+   const path = await this.uploaderSrv.upload('imagen',
        `${Date.now()}-${this.img.name}`,
        this.img.mimeType,
        this.img.data);
@@ -55,7 +55,7 @@ export class HomePage implements OnInit {
       //  const hola = await this.uploaderSrv.getUrls('images', path as any);
       //  console.log(hola);
 
-       this.image = await this.uploaderSrv.getUrl('images', path);
+       this.image = await this.uploaderSrv.getUrl('imagen', path);
 
       //  this.imgUrl.push(this.image);
 
