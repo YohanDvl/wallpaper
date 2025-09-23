@@ -57,6 +57,32 @@ export class UpLoader {
     return this.createSignedUrls(bucket, paths);
   }
 
+  // Elimina un archivo del bucket dado su path
+  async delete(bucket: string, path: string): Promise<boolean> {
+    const { data, error } = await supabase.storage.from(bucket).remove([path]);
+    if (error) {
+      console.error('Error al eliminar', error);
+      return false;
+    }
+    return true;
+  }
+
+  // Extrae el path interno de Storage a partir de un Signed URL
+  // Formato típico: https://<proj>.supabase.co/storage/v1/object/sign/<bucket>/<path>?token=...
+  extractPathFromSignedUrl(bucket: string, signedUrl: string): string | null {
+    try {
+      const marker = `/object/sign/${bucket}/`;
+      const idx = signedUrl.indexOf(marker);
+      if (idx === -1) return null;
+      const after = signedUrl.substring(idx + marker.length);
+      const q = after.indexOf('?');
+      return q === -1 ? after : after.substring(0, q);
+    } catch (e) {
+      console.error('No se pudo extraer el path del Signed URL', e);
+      return null;
+    }
+  }
+
 
   // async getUrls(bucket: string, path: string[]){
 

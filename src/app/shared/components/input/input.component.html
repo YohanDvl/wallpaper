@@ -3,8 +3,11 @@
         [type]="type"
         [label]="label"
         [placeholder]="placeholder"
+      [value]="control.value"
         labelPlacement="floating"
-        (keyup) = 'onType($event);'
+      [disabled]="disabled"
+      [autocomplete]="autocomplete"
+  (ionInput) = 'onType($event);'
 >
 @if (type ==='password') {
 <ion-input-password-toggle slot="end"></ion-input-password-toggle>

@@ -35,4 +35,12 @@ export class GlobalUrl {
     this.urlsSubject.next([...this.imgUrls]);
   }
 
+  removeUrl(url: string){
+    this.imgUrls = this.imgUrls.filter(u => u !== url);
+    this.urlsSubject.next([...this.imgUrls]);
+    if (this.imgUrl === url) {
+      this.imgUrl = '';
+    }
+  }
+
 }

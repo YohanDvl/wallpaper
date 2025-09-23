@@ -106,8 +106,13 @@ app-card {
 
 /* FAB: separación vertical entre botones y espacio con el borde */
 ion-fab {
-  margin: 0 8px 8px 0;
+  margin: 0 10px 10px 0;   /* margen con el borde */
+  display: flex;           /* flex container */
+  flex-direction: column;  /* coloca los hijos en columna */
+  align-items: flex-end;   /* los alinea al borde derecho */
+  gap: 10px;               /* separación entre botones */
 }
+
 ion-fab app-floating-button + app-floating-button {
   margin-top: 8px;
 }

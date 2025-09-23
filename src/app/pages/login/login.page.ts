@@ -21,8 +21,15 @@ export class LoginPage implements OnInit {
   }
 
   public async onLogin(){
+    
     console.log(this.loginForm.value);
-   await this.authSrv.login(this.email.value, this.password.value);
+    console.log("login hecho");
+   try {
+     await this.authSrv.login(this.email.value, this.password.value);
+     console.log("login exitoso");
+   } catch (e) {
+     console.error('Error en login', e);
+   }
 
   }
 
@@ -35,6 +42,11 @@ export class LoginPage implements OnInit {
       email: this.email,
       password: this.password,
     })
+  }
+
+  // Asegura que al volver desde logout, el formulario esté limpio
+  ionViewWillEnter() {
+    this.loginForm.reset();
   }
 
 }

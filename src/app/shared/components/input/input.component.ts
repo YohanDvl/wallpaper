@@ -12,13 +12,18 @@ export class InputComponent  implements OnInit {
 @Input() label: string = '';
 @Input() placeholder: string = '';
 @Input() control: FormControl = new FormControl();
+@Input() disabled: boolean = false;
+@Input() autocomplete: string = 'off';
 
   constructor() { }
 
   ngOnInit() {}
 
   public onType(event: any){
-    this.control.setValue(event.target.value);
+    const value = event?.detail?.value ?? event?.target?.value ?? '';
+    if (this.control.value !== value) {
+      this.control.setValue(value);
+    }
   }
 
 }

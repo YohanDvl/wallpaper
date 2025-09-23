@@ -46,6 +46,10 @@ export class Auth {
       return this.authFirebase.currentUser?.uid ?? null;
     }
 
+    getEmail(): string | null {
+      return this.authFirebase.currentUser?.email ?? null;
+    }
+
     // Espera hasta que el UID esté disponible (útil al entrar tras login o recarga)
     async waitForUid(timeoutMs = 5000): Promise<string | null> {
       const start = Date.now();

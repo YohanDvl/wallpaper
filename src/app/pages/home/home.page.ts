@@ -48,7 +48,8 @@ export class HomePage implements OnInit {
 
     public async logOut(){
    await this.authSrv.logOut();
-    this.router.navigate(['/login']);
+    // Navegación con replaceUrl para que no quede el estado previo en el stack
+    this.router.navigate(['/login'], { replaceUrl: true });
       // limpia estado local/global de imágenes al cambiar de cuenta
       this.urlSrv.setUrls([]);
   }
@@ -91,6 +92,11 @@ export class HomePage implements OnInit {
     const sheet = await this.actionSheetCtrl.create({
       header: 'Configuración',
       buttons: [
+        {
+          text: 'Editar perfil',
+          icon: 'person-circle',
+          handler: () => this.router.navigate(['/profile'])
+        },
         {
           text: 'Inglés',
           icon: 'language',

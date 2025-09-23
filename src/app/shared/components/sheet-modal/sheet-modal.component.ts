@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import myCustomPlugin, { WallpaperTarget } from 'src/app/plugins/myCustomPlugin';
 import { GlobalUrl } from 'src/app/core/providers/globalUrl/global-url';
 import { ToastController } from '@ionic/angular';
+import { UpLoader } from 'src/app/core/providers/upLoader/up-loader';
+import { Auth } from 'src/app/core/providers/auth/auth';
 
 @Component({
   selector: 'app-sheet-modal',
@@ -22,6 +24,11 @@ export class SheetModalComponent  implements OnInit {
     {
       text: 'Fijar en ambas',
       handler: () => this.applyWallpaper('both')
+    },
+    {
+      text: 'Eliminar imagen',
+      role: 'destructive',
+      handler: () => this.deleteCurrentImage()
     },
     {
       text: 'Cancelar',
@@ -48,7 +55,7 @@ export class SheetModalComponent  implements OnInit {
         await this.presentToast('No se pudo aplicar el fondo', 'danger');
       }
     }
-  constructor(private readonly urlSrv: GlobalUrl, private toastCtrl: ToastController) { }
+  constructor(private readonly urlSrv: GlobalUrl, private toastCtrl: ToastController, private uploader: UpLoader, private auth: Auth) { }
 
   ngOnInit() {}
 
@@ -63,6 +70,32 @@ export class SheetModalComponent  implements OnInit {
       ]
     });
     await t.present();
+  }
+
+  private async deleteCurrentImage() {
+    try {
+      const url = this.urlSrv.getUrl();
+      if (!url) {
+        await this.presentToast('No hay imagen seleccionada', 'warning');
+        return;
+      }
+      const path = this.uploader.extractPathFromSignedUrl('imagen', url);
+      if (!path) {
+        await this.presentToast('No se pudo identificar la imagen', 'danger');
+        return;
+      }
+      const ok = await this.uploader.delete('imagen', path);
+      if (ok) {
+        // Quita de la lista visible
+        this.urlSrv.removeUrl(url);
+        await this.presentToast('Imagen eliminada', 'success');
+      } else {
+        await this.presentToast('No se pudo eliminar la imagen', 'danger');
+      }
+    } catch (e) {
+      console.error(e);
+      await this.presentToast('No se pudo eliminar la imagen', 'danger');
+    }
   }
 
 }
