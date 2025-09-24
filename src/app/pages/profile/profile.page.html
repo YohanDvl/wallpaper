@@ -9,11 +9,8 @@
 
 <ion-content [fullscreen]="true">
   <form [formGroup]="form" (ngSubmit)="save()" class="form">
-  <app-input label="Nombre" placeholder="Tu nombre" [control]="nameCtrl" autocomplete="given-name"></app-input>
-  <app-input label="Apellido" placeholder="Tu apellido" [control]="lastNameCtrl" autocomplete="family-name"></app-input>
-  <app-input label="Email" placeholder="tu@email.com" type="email" [control]="emailCtrl" [disabled]="true" autocomplete="email"></app-input>
-  <app-input label="Contraseña actual (escríbela)" placeholder="Tu contraseña actual" type="password" [control]="currentPasswordCtrl" autocomplete="current-password"></app-input>
-  <app-input label="Nueva contraseña" placeholder="Nueva contraseña" type="password" [control]="passwordCtrl" autocomplete="new-password"></app-input>
+  <app-input label="Cambiar nombre" placeholder="Tu nombre" [control]="nameCtrl" autocomplete="given-name"></app-input>
+  <app-input label="Cambiar apellido" placeholder="Tu apellido" [control]="lastNameCtrl" autocomplete="family-name"></app-input>
 
     <app-button [disabled]="loading || form.invalid" type="submit" value="Guardar" color="primary"></app-button>
   </form>

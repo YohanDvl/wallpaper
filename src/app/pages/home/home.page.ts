@@ -8,6 +8,8 @@ import { UpLoader } from 'src/app/core/providers/upLoader/up-loader';
 import { IImage } from 'src/interfaces/image.interface';
 import { ActionSheetController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { User as UserService } from 'src/app/shared/services/user/user';
+import { Query } from 'src/app/core/providers/query/query';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +21,7 @@ export class HomePage implements OnInit {
   public img!: IImage;
   // public imgUrl: string[] = [];
   public image: string = '';
+  displayName = '';
 
   constructor(private readonly authSrv: Auth,
     private readonly router: Router,
@@ -27,17 +30,42 @@ export class HomePage implements OnInit {
     private readonly urlSrv: GlobalUrl,
     private readonly langSrv: Language,
     private actionSheetCtrl: ActionSheetController,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private userSrv: UserService,
+    private query: Query
   ) { }
 
   ngOnInit() {
     // Al iniciar, cargamos las imágenes del usuario actual
     this.refreshUserImages().catch(console.error);
+
+    // Suscribirse a cambios del perfil para mostrar el nombre en Home
+    this.userSrv.getProfile$().subscribe((p) => {
+      if (p) {
+        const full = `${p.name ?? ''} ${p.lastName ?? ''}`.trim();
+        this.displayName = full;
+      }
+    });
+
+    // Pre-cargar el nombre desde Firestore si aún no está en el store
+    this.prefetchUserName().catch(console.error);
   }
 
   // También refrescar cada vez que la vista entra en foco
   ionViewWillEnter() {
     this.refreshUserImages().catch(console.error);
+  }
+
+  private async prefetchUserName() {
+    const uid = await this.authSrv.waitForUid();
+    if (!uid) return;
+    const res = await this.query.readOneByField('users', 'uid', uid);
+    const data = res?.data ?? {};
+    const name = (data.name ?? '').trim();
+    const lastName = (data.lastName ?? '').trim();
+  const full = `${name}${lastName ? ' ' + lastName : ''}`.trim();
+    if (full) this.displayName = full;
+    if (name || lastName) this.userSrv.setProfile(name, lastName);
   }
 
   public languageChanger(event: any){

@@ -1,6 +1,7 @@
 <ion-content [fullscreen]="true">
 
   <div class="header">
+    <div class="p" *ngIf="displayName"><p>Hola {{ displayName }}</p></div>
     <div class="p"><p>{{ 'WELCOME_MESSAGE' | translate }}</p></div>
   <div class="languageContainer">
   </div>
