@@ -8,18 +8,22 @@
 ion-content {
   --background: radial-gradient(1200px 900px at 20% 0%, rgba(255,255,255,0.06), transparent 40%),
                  linear-gradient(135deg, #6a11cb 0%, #000000 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 16px;
-  padding-top: clamp(32px, 12vh, 120px); /* baja la tarjeta un poco */
+  padding: 16px; /* respiración en pantallas pequeñas */
 }
 
 /* Usar el slot de scroll interno de ion-content como grid centrado */
 ion-content::part(scroll) {
-  min-height: auto;
-  display: block; /* desactiva el grid centrado */
+  min-height: 100vh;   /* fallback */
+  min-height: 100dvh;  /* viewport dinámico (móviles) */
+  display: grid;
+  place-items: center; /* centro real vertical y horizontal */
+}
+
+/* El formulario no debe expandirse más de lo necesario */
+.center-viewport {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 /* El formulario no debe expandirse más de lo necesario */
