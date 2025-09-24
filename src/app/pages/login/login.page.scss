@@ -9,9 +9,24 @@ ion-content {
   --background: radial-gradient(1200px 900px at 20% 0%, rgba(255,255,255,0.06), transparent 40%),
                  linear-gradient(135deg, #6a11cb 0%, #000000 100%);
   display: flex;
+  flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  padding: 16px;
+  padding-top: clamp(32px, 12vh, 120px); /* baja la tarjeta un poco */
+}
+
+/* Usar el slot de scroll interno de ion-content como grid centrado */
+ion-content::part(scroll) {
+  min-height: auto;
+  display: block; /* desactiva el grid centrado */
+}
+
+/* El formulario no debe expandirse más de lo necesario */
+.center-viewport {
+  width: 100%;
+  display: flex;
   justify-content: center;
-  padding: 16px; /* respiración en pantallas pequeñas */
 }
 
 /* Tarjeta centrada y pulida */
@@ -20,6 +35,7 @@ ion-card {
   width: min(420px, 92vw);
   padding: 24px 20px;
   border-radius: 16px;
+  margin-inline: auto; /* asegura centrado dentro de formularios de ancho completo */
 
   /* Glassmorphism sutil con fallback */
   background: rgba(255, 255, 255, 0.82);

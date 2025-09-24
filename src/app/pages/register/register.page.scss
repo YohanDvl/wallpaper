@@ -7,11 +7,24 @@
 /* Fondo general */
 ion-content {
 	--background: radial-gradient(1200px 900px at 20% 0%, rgba(255,255,255,0.06), transparent 40%),
-								linear-gradient(135deg, #6a11cb 0%, #000000 100%);
+						linear-gradient(135deg, #6a11cb 0%, #000000 100%);
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	padding: 16px;
+	padding-top: clamp(32px, 12vh, 120px);
+}
+
+ion-content::part(scroll) {
+	min-height: auto;
+	display: block; /* desactiva grid centrado */
+}
+
+.center-viewport {
+	width: 100%;
+	display: flex;
+	justify-content: center;
 }
 
 /* Tarjeta centrada */
@@ -20,6 +33,7 @@ ion-card {
 	width: min(420px, 92vw);
 	padding: 24px 20px;
 	border-radius: 16px;
+	margin-inline: auto; /* centrado seguro */
 
 	background: rgba(255, 255, 255, 0.82);
 	-webkit-backdrop-filter: saturate(150%) blur(12px);

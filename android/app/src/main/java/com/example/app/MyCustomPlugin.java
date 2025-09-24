@@ -7,15 +7,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 
-import com.capacitorjs.plugins.toast.Toast;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,23 +21,31 @@ import java.net.URL;
 @CapacitorPlugin(name = "myCustomPlugin")
 public class MyCustomPlugin extends Plugin {
 
-  public static  final String CAPACITOR_SHARED_PREFERENCES_NAME = "CapacitorStorage";
+  public static final String CAPACITOR_SHARED_PREFERENCES_NAME = "CapacitorStorage";
 
-  // Nuevo método: establece el wallpaper según target y URL pasada desde JS
   @PluginMethod()
   public void setWallpaper(PluginCall call) {
     String url = call.getString("url", null);
     String target = call.getString("target", "home"); // home | lock | both
 
+    // Si url es null, intenta leer de SharedPreferences
     if (url == null || url.isEmpty()) {
-      call.reject("URL vacía o nula");
-      return;
+      SharedPreferences sharedPreferences = getContext().getSharedPreferences(CAPACITOR_SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+      url = sharedPreferences.getString("url", "");
+      target = "home";
+      if (url == null || url.isEmpty()) {
+        call.reject("URL vacía o nula");
+        return;
+      }
     }
+
+    final String finalUrl = url;
+    final String finalTarget = target;
 
     new Thread(() -> {
       try {
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(getContext());
-        Bitmap bitmap = downloadImage(url);
+        Bitmap bitmap = downloadImage(finalUrl);
 
         if (bitmap == null) {
           call.reject("No se pudo descargar la imagen");
@@ -50,9 +54,9 @@ public class MyCustomPlugin extends Plugin {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
           int flag = WallpaperManager.FLAG_SYSTEM; // home por defecto
-          if ("lock".equals(target)) {
+          if ("lock".equals(finalTarget)) {
             flag = WallpaperManager.FLAG_LOCK;
-          } else if ("both".equals(target)) {
+          } else if ("both".equals(finalTarget)) {
             // Establecer ambos: primero home, luego lock
             wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_SYSTEM);
             wallpaperManager.setBitmap(bitmap, null, true, WallpaperManager.FLAG_LOCK);
@@ -63,7 +67,6 @@ public class MyCustomPlugin extends Plugin {
           }
           wallpaperManager.setBitmap(bitmap, null, true, flag);
         } else {
-          // En APIs antiguas solo hay uno (home)
           wallpaperManager.setBitmap(bitmap);
         }
 
@@ -77,43 +80,29 @@ public class MyCustomPlugin extends Plugin {
     }).start();
   }
 
-  // Método antiguo por compatibilidad: lee URL de Preferences
+  // No hace falta método execute separado, pero si quieres compatibilidad:
   @PluginMethod()
   public void execute(PluginCall call) {
-    SharedPreferences sharedPreferences = getContext().getSharedPreferences(CAPACITOR_SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-    String urlObject = sharedPreferences.getString("url", "");
-    if (urlObject == null || urlObject.isEmpty()) {
-      call.reject("URL no encontrada en Preferences");
-      return;
-    }
-    // Por defecto aplica a pantalla principal
-    call.set("url", urlObject);
-    call.set("target", "home");
+    // Esto simplemente llama a setWallpaper que ya maneja SharedPreferences si url es null
     setWallpaper(call);
   }
 
-  private Bitmap downloadImage(String signedUrl){
+  private Bitmap downloadImage(String signedUrl) {
     HttpURLConnection connection = null;
-
     try {
       URL url = new URL(signedUrl);
       connection = (HttpURLConnection) url.openConnection();
       connection.setDoInput(true);
       connection.connect();
-
       InputStream input = connection.getInputStream();
       return BitmapFactory.decodeStream(input);
-    }catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
       return null;
     } finally {
-      if(connection !=null){
+      if (connection != null) {
         connection.disconnect();
       }
     }
   }
-
-
-
-
 }

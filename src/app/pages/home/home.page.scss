@@ -9,8 +9,10 @@
 ion-content {
   --background: radial-gradient(1200px 900px at 20% 0%, rgba(255,255,255,0.06), transparent 40%),
                 linear-gradient(135deg, #6a11cb 0%, #000000 100%);
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-height: 100%;
+  padding-top: clamp(12px, 4vh, 28px); /* separa un poco del borde superior */
 }
 
 /* Cabecera con glassmorphism y layout responsivo */
@@ -20,7 +22,7 @@ ion-content {
   justify-content: space-between;
   gap: 12px;
   padding: 16px 20px;
-  margin: 16px;
+  margin: clamp(20px, 6vh, 56px) 16px 16px; /* baja ligeramente el header */
   border-radius: 14px;
 
   background: rgba(255, 255, 255, 0.82);
@@ -83,6 +85,9 @@ ion-content {
   justify-items: center;
   gap: 16px;
   padding: 8px 16px 24px;
+  margin-top: clamp(24px, 10vh, 120px); /* coloca la tarjeta un poco más abajo */
+  /* Deja espacio inferior para que el FAB no se superponga visualmente */
+  margin-bottom: clamp(56px, 12vh, 100px);
 }
 
 /* Envolver el componente compartido como tarjeta “glass” */
@@ -104,9 +109,29 @@ app-card {
   animation: card-in 320ms ease;
 }
 
+/* Quitar fondo blanco extra detrás de las imágenes (ion-card internos) */
+app-card ion-card {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+/* Imágenes limpias y responsivas */
+app-card ion-card img,
+app-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: transparent;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
 /* FAB: separación vertical entre botones y espacio con el borde */
 ion-fab {
-  margin: 0 10px 10px 0;   /* margen con el borde */
+  /* Elevar respecto a la barra de gestos: usa safe-area cuando existe */
+  bottom: calc(var(--ion-safe-area-bottom, 0px) + 28px);
+  right: 14px;
+  margin: 0;               /* usar bottom/right en lugar de margin */
   display: flex;           /* flex container */
   flex-direction: column;  /* coloca los hijos en columna */
   align-items: flex-end;   /* los alinea al borde derecho */
